@@ -18,7 +18,7 @@ Draw single or multi-stroke characters in the air. The system predicts what you 
 
 ---
 
-## ️ Architecture
+## Architecture
 
 **BERT-style Transformer Encoder** operating on raw (x, y) stroke coordinate sequences.
 
@@ -29,7 +29,7 @@ Draw single or multi-stroke characters in the air. The system predicts what you 
 
 ---
 
-##  Results
+## Results
 
 | Metric | Score |
 |---|---|
@@ -41,7 +41,7 @@ Draw single or multi-stroke characters in the air. The system predicts what you 
 
 ---
 
-##  Improvements Implemented
+## Improvements Implemented
 
 ### 8.1 — Time Series Forecasting
 The forecaster takes the **first 50%** of a stroke and predicts the remaining trajectory as (x, y) coordinates.
@@ -66,21 +66,22 @@ Threshold = **0.50** calibrated on the validation set (accuracy 80.5%). Predicti
 
 ## Quick Start
 
-### Requirements
+### 1. Clone the repository
 ```bash
-pip install torch opencv-python mediapipe numpy
+git lfs install
+git clone https://github.com/nomitha27/Air_Writing_Transformer.git
+cd Air_Writing_Transformer
 ```
 
-### Run the Live Demo
+### 2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Run the Live Demo
 ```bash
 python demo_final.py
 ```
-
-Make sure these files are in the same directory:
-- `best_model.pt` (or `lora_model.pt` for writer-adaptive)
-- `label_encoder.pkl`
-- `hand_landmarker.task`
-- `forecaster.pt`
 
 ### Controls
 
@@ -94,34 +95,52 @@ Make sure these files are in the same directory:
 
 ---
 
-##  Repository Structure
+## Reproducing Results
+
+### Requirements
+- Google Colab with **T4 GPU**
+- UJI Pen Characters 2 dataset — download `ujipenchars2.txt` from [UCI ML Repository](https://archive.ics.uci.edu/dataset/493/uji+pen+characters+v2)
+
+### Steps
+1. Open `Air_Writing_DL.ipynb` in Google Colab
+2. Set Runtime → **T4 GPU**
+3. Upload `ujipenchars2.txt` to the Colab session
+4. Click **Runtime → Run All**
+
+### Expected Output
+
+| Metric | Expected Value |
+|---|---|
+| Top-1 Accuracy | ~71.7% |
+| Top-5 Accuracy | ~95.4% |
+| Macro F1 | ~0.71 |
+| Forecaster Val MSE | ~0.054 |
+
+Training runs for 40 epochs (~15–20 min on T4 GPU) and saves:
+- `best_model.pt` — best classifier checkpoint
+- `forecaster.pt` — trajectory forecaster
+- `lora_model.pt` — LoRA fine-tuned model
+- `label_encoder.pkl` — class label encoder
+
+---
+
+## Repository Structure
 
 ```
 ├── Air_Writing_DL.ipynb     # Full training pipeline (Colab)
 ├── demo_final.py            # Live webcam demo
-├── best_model.pt            # Trained classifier weights
-├── forecaster.pt            # Trajectory forecaster weights
-├── lora_model.pt            # Writer-adapted model weights
+├── best_model.pt            # Trained classifier weights (Git LFS)
+├── forecaster.pt            # Trajectory forecaster weights (Git LFS)
+├── lora_model.pt            # Writer-adapted model weights (Git LFS)
 ├── label_encoder.pkl        # sklearn LabelEncoder (97 classes)
-├── hand_landmarker.task     # MediaPipe hand landmark model
-└── Air_Writing_DL.pptx      # Project presentation
+├── hand_landmarker.task     # MediaPipe hand landmark model (Git LFS)
+├── Air_Writing_DL.pptx      # Project presentation
+├── requirements.txt         # Python dependencies
+└── README.md                # This file
 ```
-
-
-
----
-
-## Training (Colab)
-
-1. Open `Air_Writing_DL.ipynb` in Google Colab
-2. Upload `ujipenchars2.txt` (UJI Pen Characters 2 dataset)
-3. Set Runtime → **T4 GPU**
-4. Run All
-
-Dataset: [UJI Pen Characters 2](https://archive.ics.uci.edu/dataset/493/uji+pen+characters+v2) — 11,640 samples, 97 classes, stratified 70/15/15 split.
 
 ---
 
 ## Dataset
 
-This project uses the **UJI Pen Characters 2** dataset (UNIPEN format). The dataset file `ujipenchars2.txt` is **not included** in this repo. Download it from [UCI ML Repository](https://archive.ics.uci.edu/dataset/493/uji+pen+characters+v2).
+This project uses the **UJI Pen Characters 2** dataset (UNIPEN format). The dataset file `ujipenchars2.txt` is **not included** in this repo. Download it from [UCI ML Repository](https://archive.ics.uci.edu/dataset/493/uji+pen+characters+v2) — 11,640 samples, 97 classes, stratified 70/15/15 split.
